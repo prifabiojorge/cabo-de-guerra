@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════
+   PAINEL DO PROFESSOR — Styles
+   ═══════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0f0e17;
+  --bg-secondary: #1a1932;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --text-primary: #fffffe;
+  --text-secondary: #a7a9be;
+  --accent: #ff8906;
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #fbbf24;
+  --info: #3b82f6;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* ─── Header ─── */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), #e67700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.header-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Global Controls ─── */
+.global-controls {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 137, 6, 0.03);
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.controls-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.controls-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.ctrl-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctrl-btn:hover {
+  border-color: var(--accent);
+  background: rgba(255, 137, 6, 0.15);
+  transform: translateY(-1px);
+}
+
+.ctrl-btn:active {
+  transform: scale(0.97);
+}
+
+.ctrl-hybrid {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.ctrl-hybrid:hover {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.ctrl-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--error);
+}
+
+.ctrl-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: var(--error);
+}
+
+/* ─── Mesas Grid ─── */
+.mesas-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.8rem;
+  padding: 1.2rem 2rem 2rem;
+}
+
+/* ─── Mesa Card ─── */
+.mesa-card {
+  background: var(--bg-card);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  min-height: 140px;
+}
+
+.mesa-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mesa-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.mesa-status-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status colors */
+.mesa-card.status-lobby {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.mesa-card.status-lobby .mesa-status-badge {
+  background: rgba(167, 169, 190, 0.15);
+  color: var(--text-secondary);
+}
+
+.mesa-card.status-playing {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.mesa-card.status-playing .mesa-status-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--info);
+}
+
+.mesa-card.status-finished {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.mesa-card.status-finished .mesa-status-badge {
+  background: rgba(34, 197, 94, 0.2);
+  color: var(--success);
+}
+
+/* Card body */
+.mesa-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mesa-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.mesa-info-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mesa-info-value {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mesa-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.mesa-score-t1 {
+  color: #60a5fa;
+}
+
+.mesa-score-vs {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.mesa-score-t2 {
+  color: #f87171;
+}
+
+.mesa-winner {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--warning);
+  text-align: center;
+}
+
+/* Card footer */
+.mesa-card-footer {
+  margin-top: auto;
+}
+
+.mesa-reset-btn {
+  width: 100%;
+  padding: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mesa-reset-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--error);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .mesas-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .mesas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-header {
+    padding: 0.8rem 1rem;
+  }
+
+  .global-controls {
+    padding: 0.8rem 1rem;
+  }
+}
+
+.footer-signature {
+  position: fixed;
+  z-index: 100;
+  bottom: 0.5rem;
+  right: 1rem;
+  text-align: right;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}

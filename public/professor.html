@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Professor — Cabo de Guerra</title>
+  <meta name="description" content="Dashboard do professor para monitorar e controlar todas as mesas do Cabo de Guerra: Matemática.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="professor.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1 class="header-title">👨‍🏫 Painel do Professor</h1>
+      <p class="header-subtitle">Cabo de Guerra: Matemática</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <span id="stat-waiting" class="stat-value">0</span>
+        <span class="stat-label">Aguardando</span>
+      </div>
+      <div class="stat">
+        <span id="stat-playing" class="stat-value">0</span>
+        <span class="stat-label">Jogando</span>
+      </div>
+      <div class="stat">
+        <span id="stat-finished" class="stat-value">0</span>
+        <span class="stat-label">Finalizadas</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Controls -->
+  <section class="global-controls">
+    <div class="controls-row">
+      <span class="controls-label">Definir operação para TODAS as mesas:</span>
+      <div class="controls-buttons">
+        <button class="ctrl-btn" onclick="globalSetOperation('addition')">+ Soma</button>
+        <button class="ctrl-btn" onclick="globalSetOperation('subtraction')">− Subtração</button>
+        <button class="ctrl-btn" onclick="globalSetOperation('multiplication')">× Multiplicação</button>
+        <button class="ctrl-btn" onclick="globalSetOperation('division')">÷ Divisão</button>
+        <button class="ctrl-btn ctrl-hybrid" onclick="globalSetOperation('hybrid')">🔀 Pai D'égua</button>
+      </div>
+    </div>
+    <div class="controls-row">
+      <button class="ctrl-btn ctrl-danger" onclick="globalResetAll()">🔄 Reiniciar TODAS as Mesas</button>
+    </div>
+  </section>
+
+  <!-- Mesas Grid -->
+  <main class="mesas-grid" id="mesas-grid">
+    <!-- JS will populate 18 mesa cards -->
+  </main>
+
+  <div class="footer-signature">
+    by Prof. Fábio Fabuloso - CISEB Celso Rodrigues/Santo Antônio do Tauá - 2026
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="professor.js"></script>
+</body>
+</html>

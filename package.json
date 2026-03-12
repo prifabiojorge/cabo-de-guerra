@@ -1,0 +1,13 @@
+{
+  "name": "cabo-de-guerra-matematica",
+  "version": "1.0.0",
+  "description": "Jogo educacional Cabo de Guerra: Matemática — multiplayer para 2 Chromebooks",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "socket.io": "^4.7.5"
+  }
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cabo de Guerra: Matemática</title>
+  <meta name="description" content="Jogo educacional de matemática no estilo cabo de guerra para duas equipes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══ ROOM SELECT SCREEN ═══ -->
+  <div id="screen-room-select" class="screen active">
+    <div class="room-select-container">
+      <div class="logo-section">
+        <div class="logo-icon" style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 3.5rem;">
+          <span style="transform: scaleX(-1);">🏃‍♂️</span>
+          <svg viewBox="0 0 100 20" style="width: 120px; height: 20px; overflow: visible;">
+            <line x1="-10" y1="10" x2="110" y2="10" stroke="#a0845c" stroke-width="10" stroke-linecap="round" stroke-dasharray="8 4" />
+            <circle cx="50" cy="10" r="12" fill="#ff8906" stroke="#fff" stroke-width="4" />
+          </svg>
+          <span>🏃</span>
+        </div>
+        <h1 class="game-title">Cabo de Guerra</h1>
+        <h2 class="game-subtitle">Matemática</h2>
+      </div>
+
+      <h3 class="section-title">Escolha sua Mesa</h3>
+      <div class="room-grid" id="room-grid">
+        <!-- JS will populate 18 room buttons -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LOBBY SCREEN ═══ -->
+  <div id="screen-lobby" class="screen">
+    <div class="lobby-container">
+      <div class="logo-section">
+        <h2 class="room-badge" id="room-badge">Mesa 1</h2>
+      </div>
+
+      <div class="operation-selection">
+        <h3 class="section-title">Escolha a operação</h3>
+        <div class="operation-grid">
+          <button class="op-btn" data-op="addition" onclick="selectOperation('addition')">
+            <span class="op-symbol">+</span>
+            <span class="op-name">Soma</span>
+          </button>
+          <button class="op-btn" data-op="subtraction" onclick="selectOperation('subtraction')">
+            <span class="op-symbol">−</span>
+            <span class="op-name">Subtração</span>
+          </button>
+          <button class="op-btn" data-op="multiplication" onclick="selectOperation('multiplication')">
+            <span class="op-symbol">×</span>
+            <span class="op-name">Multiplicação</span>
+          </button>
+          <button class="op-btn" data-op="division" onclick="selectOperation('division')">
+            <span class="op-symbol">÷</span>
+            <span class="op-name">Divisão</span>
+          </button>
+          <button class="op-btn op-hybrid" data-op="hybrid" onclick="selectOperation('hybrid')">
+            <span class="op-symbol">🔀</span>
+            <span class="op-name">Pai D'égua</span>
+          </button>
+        </div>
+        <p id="op-status" class="op-status">Nenhuma operação selecionada</p>
+      </div>
+
+      <div class="team-selection">
+        <button id="btn-team1" class="team-btn team1-btn" onclick="joinTeam(1)">
+          <span class="team-emoji">🟢</span>
+          <span class="team-label">Time 1</span>
+          <span id="team1-status" class="team-status">Aguardando...</span>
+        </button>
+
+        <div class="vs-divider">VS</div>
+
+        <button id="btn-team2" class="team-btn team2-btn" onclick="joinTeam(2)">
+          <span class="team-emoji">🔴</span>
+          <span class="team-label">Time 2</span>
+          <span id="team2-status" class="team-status">Aguardando...</span>
+        </button>
+      </div>
+
+      <p class="lobby-hint">Escolha a operação e o time.<br>O jogo começa quando tudo estiver pronto!</p>
+    </div>
+  </div>
+
+  <!-- ═══ GAME SCREEN ═══ -->
+  <div id="screen-game" class="screen">
+    <div class="game-container">
+
+      <!-- Top Bar: Scores -->
+      <div class="score-bar">
+        <div class="score-side score-team1">
+          <span class="score-label">Time 1</span>
+          <span id="score-t1" class="score-value">0</span>
+        </div>
+        <div class="score-center">
+          <span id="points-to-win">/ 6</span>
+        </div>
+        <div class="score-side score-team2">
+          <span class="score-label">Time 2</span>
+          <span id="score-t2" class="score-value">0</span>
+        </div>
+      </div>
+
+      <!-- Rope Animation -->
+      <div class="rope-area">
+        <div class="character char-left" id="char-left">
+          <div class="char-body">🏃‍♂️</div>
+        </div>
+        <div class="rope-track">
+          <div class="rope-line"></div>
+          <div id="rope-indicator" class="rope-indicator"></div>
+        </div>
+        <div class="character char-right" id="char-right">
+          <div class="char-body">🏃</div>
+        </div>
+      </div>
+
+      <!-- Math Problem -->
+      <div class="problem-area">
+        <div id="feedback" class="feedback hidden"></div>
+        <div class="problem-display">
+          <span id="operand-a" class="operand">?</span>
+          <span id="operator" class="operator">+</span>
+          <span id="operand-b" class="operand">?</span>
+          <span class="equals">=</span>
+          <span id="answer-display" class="answer-box">&nbsp;</span>
+        </div>
+      </div>
+
+      <!-- Numpad -->
+      <div class="numpad">
+        <button class="numpad-btn" onclick="pressNumber(1)">1</button>
+        <button class="numpad-btn" onclick="pressNumber(2)">2</button>
+        <button class="numpad-btn" onclick="pressNumber(3)">3</button>
+        <button class="numpad-btn" onclick="pressNumber(4)">4</button>
+        <button class="numpad-btn" onclick="pressNumber(5)">5</button>
+        <button class="numpad-btn" onclick="pressNumber(6)">6</button>
+        <button class="numpad-btn" onclick="pressNumber(7)">7</button>
+        <button class="numpad-btn" onclick="pressNumber(8)">8</button>
+        <button class="numpad-btn" onclick="pressNumber(9)">9</button>
+        <button class="numpad-btn btn-clear" onclick="clearAnswer()">⌫</button>
+        <button class="numpad-btn" onclick="pressNumber(0)">0</button>
+        <button class="numpad-btn btn-submit" onclick="submitAnswer()">✓</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ RESULT SCREEN ═══ -->
+  <div id="screen-result" class="screen">
+    <div class="result-container">
+      <div id="confetti-container" class="confetti-container"></div>
+      <div id="result-icon" class="result-icon">🏆</div>
+      <h1 id="result-title" class="result-title">Vitória!</h1>
+      <p id="result-message" class="result-message"></p>
+      <div class="result-scores">
+        <div class="result-score rs-team1">
+          <span class="rs-label">Time 1</span>
+          <span id="final-score-t1" class="rs-value">0</span>
+        </div>
+        <div class="result-vs">×</div>
+        <div class="result-score rs-team2">
+          <span class="rs-label">Time 2</span>
+          <span id="final-score-t2" class="rs-value">0</span>
+        </div>
+      </div>
+      <button id="btn-restart" class="restart-btn" onclick="restartGame()">🔄 Jogar Novamente</button>
+    </div>
+  </div>
+
+  <div class="footer-signature">
+    by Prof. Fábio Fabuloso - CISEB Celso Rodrigues/Santo Antônio do Tauá - 2026
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
