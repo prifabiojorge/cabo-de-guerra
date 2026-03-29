@@ -305,73 +305,47 @@ html, body {
   margin-bottom: 2rem;
 }
 
-.team-btn {
+/* ─── Team Panels (auto-assigned, display only) ─── */
+.team-panel {
   flex: 1;
   max-width: 200px;
   padding: 1.5rem 1rem;
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius);
   background: var(--bg-card);
-  color: var(--text-primary);
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  transition: all 0.4s ease;
 }
 
-.team-btn:hover {
-  transform: translateY(-4px);
-}
-
-.team1-btn:hover, .team1-btn.ready {
+.team1-panel.mine {
   border-color: var(--team1);
   background: var(--team1-bg);
   box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
 }
 
-.team2-btn:hover, .team2-btn.ready {
+.team2-panel.mine {
   border-color: var(--team2);
   background: var(--team2-bg);
   box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
-}
-
-.team-btn.joined {
   transform: scale(1.05);
-  pointer-events: none;
 }
 
-.team-btn.taken {
-  opacity: 0.4;
-  pointer-events: none;
+.team1-panel.ready {
+  border-color: var(--team1);
 }
 
-.team-emoji {
-  font-size: 2.5rem;
+.team2-panel.ready {
+  border-color: var(--team2);
 }
 
-.team-label {
+.team-panel-name {
   font-size: 1.3rem;
   font-weight: 700;
-}
-
-.team-status {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-weight: 400;
-}
-
-.team-btn.ready .team-status {
-  color: var(--success);
-}
-
-.vs-divider {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--accent);
-  padding: 0 0.5rem;
+  color: var(--text-primary);
 }
 
 .lobby-hint {
@@ -411,13 +385,17 @@ html, body {
 }
 
 .score-label {
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--text-secondary);
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .score-value {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: 900;
 }
 
@@ -539,7 +517,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 3rem;
+  font-size: 4.5rem;
   font-weight: 800;
 }
 
@@ -576,7 +554,7 @@ html, body {
 
 .numpad-btn {
   padding: 1rem;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   font-weight: 700;
   font-family: inherit;
   background: var(--bg-secondary);
@@ -776,6 +754,28 @@ html, body {
   transform: scale(0.95);
 }
 
+.leave-btn {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  margin-top: 0.5rem;
+}
+
+.leave-btn:hover {
+  border-color: var(--error);
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.1);
+}
+
 /* ─── Team-specific backgrounds during game ─── */
 body.team-1 {
   background: linear-gradient(160deg, #0a1628 0%, #0f172a 40%, #1e1b4b 100%);
@@ -839,4 +839,104 @@ body.team-2 {
   .numpad {
     gap: 0.4rem;
   }
+}
+
+/* ═══ NAME ENTRY SCREEN ═══ */
+.name-entry-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.name-entry-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.name-input {
+  width: 100%;
+  padding: 1rem 1.4rem;
+  font-size: 1.4rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.name-input:focus {
+  border-color: #ff8906;
+}
+
+.name-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.confirm-name-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  background: #ff8906;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+}
+
+.confirm-name-btn:hover {
+  background: #e07800;
+  transform: scale(1.03);
+}
+
+.name-hint {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.change-name-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.8rem;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  transition: color 0.2s;
+  margin-top: -0.5rem;
+}
+
+.change-name-btn:hover {
+  color: rgba(255,255,255,0.7);
+}
+
+/* ─── Session Wins Display ─── */
+.session-wins {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 10px;
+  padding: 0.5rem 1.2rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.03em;
+  position: relative;
+  z-index: 1;
 }

@@ -47,7 +47,19 @@
       </div>
     </div>
     <div class="controls-row">
+      <button class="ctrl-btn ctrl-qr" onclick="showQRCode()">📱 QR Code para Alunos</button>
+    </div>
+    <div class="controls-row">
       <button class="ctrl-btn ctrl-danger" onclick="globalResetAll()">🔄 Reiniciar TODAS as Mesas</button>
+      <button class="ctrl-btn ctrl-report" id="btn-criar-relatorio" onclick="createReport()">📄 Criar Relatório</button>
+    </div>
+  </section>
+
+  <!-- Ranking Geral -->
+  <section class="ranking-section">
+    <h2 class="ranking-title">🏅 Ranking Geral da Turma</h2>
+    <div class="ranking-list" id="ranking-list">
+      <p class="ranking-empty">Nenhum aluno jogou ainda...</p>
     </div>
   </section>
 
@@ -56,10 +68,27 @@
     <!-- JS will populate 18 mesa cards -->
   </main>
 
+  <!-- Toast de feedback PDF -->
+  <div id="pdf-toast" class="pdf-toast"></div>
+
   <div class="footer-signature">
     by Prof. Fábio Fabuloso - CISEB Celso Rodrigues/Santo Antônio do Tauá - 2026
   </div>
 
+  <!-- Modal QR Code -->
+  <div id="qr-modal" class="qr-modal" onclick="hideQRCode()">
+    <div class="qr-modal-card" onclick="event.stopPropagation()">
+      <h3 class="qr-title">📱 Aponte a câmera para entrar no jogo</h3>
+      <div id="qr-canvas" class="qr-canvas"></div>
+      <p id="qr-url-text" class="qr-url-text"></p>
+      <button class="qr-close-btn" onclick="hideQRCode()">✕ Fechar</button>
+    </div>
+  </div>
+
+  <!-- QR Code library: qrcodejs exposes global QRCode constructor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- jsPDF for client-side PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="professor.js"></script>
 </body>

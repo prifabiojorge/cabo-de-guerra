@@ -15,6 +15,34 @@ app.get('/professor', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'professor.html'));
 });
 
+// API: retorna URL de rede para QR Code
+app.get('/api/info', (req, res) => {
+  const os = require('os');
+  const interfaces = os.networkInterfaces();
+  let bestIP = 'localhost';
+
+  for (const [name, addrs] of Object.entries(interfaces)) {
+    for (const iface of addrs) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        const lower = name.toLowerCase();
+        if (lower.includes('wi-fi') || lower.includes('wifi') ||
+            lower.includes('wireless') || lower.includes('wlan')) {
+          bestIP = iface.address;
+          break;
+        }
+        if (bestIP === 'localhost') bestIP = iface.address;
+      }
+    }
+    if (bestIP !== 'localhost') break;
+  }
+
+  res.json({
+    url: `http://${bestIP}:${PORT}`,
+    ip: bestIP,
+    port: PORT,
+  });
+});
+
 // ─── Game Configuration ───
 const CONFIG = {
   pointsToWin: 6,
@@ -32,6 +60,43 @@ const OP_LABELS = {
   hybrid: "Modo Pai D'égua",
 };
 
+// ─── Session Statistics ───
+// Tracks per-player and per-operation stats across the entire session
+let sessionStats = {
+  players: {},   // { playerName: { wins, losses, correctAnswers, wrongAnswers, operations: { op: { correct, wrong } } } }
+  operations: {}, // { op: { correct, wrong, gamesPlayed } }
+  totalGames: 0,
+  sessionStart: new Date(),
+};
+
+function recordAnswer(playerName, operation, isCorrect) {
+  if (!playerName) return;
+  if (!sessionStats.players[playerName]) {
+    sessionStats.players[playerName] = { wins: 0, losses: 0, correctAnswers: 0, wrongAnswers: 0, operations: {} };
+  }
+  const ps = sessionStats.players[playerName];
+  if (isCorrect) ps.correctAnswers++; else ps.wrongAnswers++;
+
+  const op = operation || 'unknown';
+  if (!ps.operations[op]) ps.operations[op] = { correct: 0, wrong: 0 };
+  if (isCorrect) ps.operations[op].correct++; else ps.operations[op].wrong++;
+
+  if (!sessionStats.operations[op]) sessionStats.operations[op] = { correct: 0, wrong: 0, gamesPlayed: 0 };
+  if (isCorrect) sessionStats.operations[op].correct++; else sessionStats.operations[op].wrong++;
+}
+
+function recordGameResult(winnerName, loserName) {
+  if (winnerName) {
+    if (!sessionStats.players[winnerName]) sessionStats.players[winnerName] = { wins: 0, losses: 0, correctAnswers: 0, wrongAnswers: 0, operations: {} };
+    sessionStats.players[winnerName].wins++;
+  }
+  if (loserName) {
+    if (!sessionStats.players[loserName]) sessionStats.players[loserName] = { wins: 0, losses: 0, correctAnswers: 0, wrongAnswers: 0, operations: {} };
+    sessionStats.players[loserName].losses++;
+  }
+  sessionStats.totalGames++;
+}
+
 // ─── Rooms (Mesas) ───
 const rooms = new Map();
 
@@ -40,8 +105,8 @@ function createFreshGame() {
     status: 'lobby', // lobby | playing | finished
     operation: null,
     teams: {
-      1: { players: 0, score: 0, problem: null, socketId: null },
-      2: { players: 0, score: 0, problem: null, socketId: null },
+      1: { players: 0, score: 0, problem: null, socketId: null, playerName: null, sessionWins: 0 },
+      2: { players: 0, score: 0, problem: null, socketId: null, playerName: null, sessionWins: 0 },
     },
     winner: null,
     ropePosition: 0,
@@ -127,6 +192,10 @@ function getDashboardData() {
       team2Players: room.teams[2].players,
       team1Score: room.teams[1].score,
       team2Score: room.teams[2].score,
+      team1Name: room.teams[1].playerName || null,
+      team2Name: room.teams[2].playerName || null,
+      team1Wins: room.teams[1].sessionWins || 0,
+      team2Wins: room.teams[2].sessionWins || 0,
       winner: room.winner,
       ropePosition: room.ropePosition,
     });
@@ -144,6 +213,8 @@ function emitLobbyState(roomId) {
   io.to(`room-${roomId}`).emit('lobby-state', {
     team1Ready: room.teams[1].players > 0,
     team2Ready: room.teams[2].players > 0,
+    team1Name: room.teams[1].playerName || null,
+    team2Name: room.teams[2].playerName || null,
     status: room.status,
     operation: room.operation,
     roomId,
@@ -155,6 +226,7 @@ io.on('connection', (socket) => {
   console.log(`🔌 Jogador conectado: ${socket.id}`);
   let playerRoom = null;
   let playerTeam = null;
+  let playerName = null;
 
   // Send rooms overview on connect
   socket.emit('rooms-list', getRoomsSummary());
@@ -201,7 +273,7 @@ io.on('connection', (socket) => {
     broadcastDashboard();
   });
 
-  // ── Join a Room (Mesa) ──
+  // ── Join a Room (Mesa) — auto-assign team ──
   socket.on('join-room', (roomId) => {
     roomId = parseInt(roomId);
     if (roomId < 1 || roomId > CONFIG.totalRooms) return;
@@ -215,9 +287,17 @@ io.on('connection', (socket) => {
       return;
     }
 
+    // Auto-assign: first to join = Side 1, second = Side 2
+    const assignedTeam = room.teams[1].players === 0 ? 1 : 2;
     playerRoom = roomId;
+    playerTeam = assignedTeam;
+    room.teams[assignedTeam].players = 1;
+    room.teams[assignedTeam].socketId = socket.id;
+
     socket.join(`room-${roomId}`);
-    console.log(`🪑 Jogador ${socket.id} entrou na Mesa ${roomId}`);
+    socket.join(`room-${roomId}-team-${assignedTeam}`);
+    socket.emit('team-assigned', assignedTeam);
+    console.log(`🪑 Jogador ${socket.id} entrou na Mesa ${roomId} → Lado ${assignedTeam}`);
 
     // Send lobby state for this room
     emitLobbyState(roomId);
@@ -225,6 +305,18 @@ io.on('connection', (socket) => {
     // Broadcast updated rooms list to everyone in room-select
     io.emit('rooms-list', getRoomsSummary());
     broadcastDashboard();
+  });
+
+  // ── Set Player Name ──
+  socket.on('set-player-name', (name) => {
+    if (!playerRoom) return;
+    const sanitized = String(name).trim().slice(0, 20) || 'Jogador';
+    playerName = sanitized;
+    const room = rooms.get(playerRoom);
+    if (playerTeam && room.teams[playerTeam]) {
+      room.teams[playerTeam].playerName = sanitized;
+      broadcastDashboard();
+    }
   });
 
   // ── Select Operation ──
@@ -259,6 +351,9 @@ io.on('connection', (socket) => {
     playerTeam = teamId;
     room.teams[teamId].players = 1;
     room.teams[teamId].socketId = socket.id;
+    if (playerName) {
+      room.teams[teamId].playerName = playerName;
+    }
     socket.join(`room-${playerRoom}-team-${teamId}`);
     console.log(`👥 Mesa ${playerRoom} — Jogador ${socket.id} → Time ${teamId}`);
 
@@ -278,22 +373,43 @@ io.on('connection', (socket) => {
 
     const team = room.teams[playerTeam];
     const parsedAnswer = parseInt(answer);
+    const currentPlayerName = team.playerName || playerName;
 
     if (parsedAnswer === team.problem.answer) {
       // Correct!
       team.score++;
       room.ropePosition += (playerTeam === 1 ? -1 : 1);
-      console.log(`✅ Mesa ${playerRoom} — Time ${playerTeam} acertou! Placar: ${team.score}`);
+      recordAnswer(currentPlayerName, room.operation, true);
+      console.log(`✅ Mesa ${playerRoom} — Time ${playerTeam} acertou! Corda: ${room.ropePosition}`);
 
-      // Check for win
-      if (team.score >= CONFIG.pointsToWin) {
+      const ropeWinner = room.ropePosition <= -CONFIG.pointsToWin ? 1
+                       : room.ropePosition >= CONFIG.pointsToWin  ? 2
+                       : null;
+
+      if (ropeWinner !== null) {
         room.status = 'finished';
-        room.winner = playerTeam;
-        console.log(`🏆 Mesa ${playerRoom} — Time ${playerTeam} venceu!`);
+        room.winner = ropeWinner;
+        room.teams[ropeWinner].sessionWins = (room.teams[ropeWinner].sessionWins || 0) + 1;
+
+        const loserTeam = ropeWinner === 1 ? 2 : 1;
+        const winnerName = room.teams[ropeWinner].playerName;
+        const loserName = room.teams[loserTeam].playerName;
+        recordGameResult(winnerName, loserName);
+
+        // Register game for the operation used
+        const op = room.operation || 'unknown';
+        if (!sessionStats.operations[op]) sessionStats.operations[op] = { correct: 0, wrong: 0, gamesPlayed: 0 };
+        sessionStats.operations[op].gamesPlayed++;
+
+        console.log(`🏆 Mesa ${playerRoom} — Lado ${ropeWinner} venceu! (corda em ${room.ropePosition})`);
         io.to(`room-${playerRoom}`).emit('game-over', {
-          winner: playerTeam,
+          winner: ropeWinner,
           team1Score: room.teams[1].score,
           team2Score: room.teams[2].score,
+          team1Name: room.teams[1].playerName || 'Lado 1',
+          team2Name: room.teams[2].playerName || 'Lado 2',
+          team1Wins: room.teams[1].sessionWins,
+          team2Wins: room.teams[2].sessionWins,
           ropePosition: room.ropePosition,
         });
         io.emit('rooms-list', getRoomsSummary());
@@ -301,7 +417,6 @@ io.on('connection', (socket) => {
         return;
       }
 
-      // Generate new problem
       team.problem = generateProblem(room.operation);
 
       io.to(`room-${playerRoom}-team-${playerTeam}`).emit('answer-result', {
@@ -319,6 +434,7 @@ io.on('connection', (socket) => {
       broadcastDashboard();
     } else {
       // Wrong answer
+      recordAnswer(currentPlayerName, room.operation, false);
       console.log(`❌ Mesa ${playerRoom} — Time ${playerTeam} errou (respondeu ${parsedAnswer}, correto: ${team.problem.answer})`);
 
       team.problem = generateProblem(room.operation);
@@ -339,6 +455,7 @@ io.on('connection', (socket) => {
       if (room.status !== 'finished') {
         room.teams[playerTeam].players = 0;
         room.teams[playerTeam].socketId = null;
+        room.teams[playerTeam].playerName = null;
 
         if (room.status === 'playing') {
           // Reset the room
@@ -353,14 +470,83 @@ io.on('connection', (socket) => {
     }
   });
 
-  // ── Restart Game ──
+  // ── Restart Game (keep names, teams & session wins) ──
   socket.on('restart-game', () => {
     if (!playerRoom) return;
-    console.log(`🔄 Mesa ${playerRoom} — Reiniciando...`);
-    rooms.set(playerRoom, createFreshGame());
-    io.to(`room-${playerRoom}`).emit('game-reset', { reason: 'Novo jogo!' });
+    console.log(`🔄 Mesa ${playerRoom} — Jogar novamente...`);
+    const room = rooms.get(playerRoom);
+
+    // Resetar apenas o estado da partida — NÃO remover jogadores dos canais
+    room.status = 'lobby';
+    room.teams[1].score = 0;
+    room.teams[1].problem = null;
+    room.teams[2].score = 0;
+    room.teams[2].problem = null;
+    room.winner = null;
+    room.ropePosition = 0;
+    // sessionWins, playerName, players, socketId — PRESERVADOS
+
+    // Se a operação já estiver definida, iniciar o jogo diretamente
+    if (room.operation) {
+      startGame(playerRoom);
+    } else {
+      // Caso raro: operação ainda não definida — enviados ao lobby
+      emitLobbyState(playerRoom);
+    }
+
     io.emit('rooms-list', getRoomsSummary());
     broadcastDashboard();
+  });
+
+  // ── Professor: End Session & Generate Report ──
+  socket.on('professor-end-session', () => {
+    console.log('📊 Professor solicitou fim de sessão — gerando relatório...');
+
+    // Capture current data before reset
+    const reportData = {
+      sessionStart: sessionStats.sessionStart,
+      sessionEnd: new Date(),
+      totalGames: sessionStats.totalGames,
+      players: { ...sessionStats.players },
+      operations: { ...sessionStats.operations },
+      rooms: getDashboardData(),
+    };
+
+    // Reset all rooms
+    for (let i = 1; i <= CONFIG.totalRooms; i++) {
+      rooms.set(i, createFreshGame());
+      io.to(`room-${i}`).emit('game-reset', { reason: 'Sessão encerrada pelo professor.' });
+    }
+
+    // Reset session stats
+    sessionStats = {
+      players: {},
+      operations: {},
+      totalGames: 0,
+      sessionStart: new Date(),
+    };
+
+    io.emit('rooms-list', getRoomsSummary());
+    broadcastDashboard();
+
+    // Send report data only to professor
+    socket.emit('session-report', reportData);
+    console.log('✅ Sessão encerrada e dados do relatório enviados.');
+  });
+
+  // ── Leave Room (full reset) ──
+  socket.on('leave-room', () => {
+    if (!playerRoom) return;
+    console.log(`🚪 Mesa ${playerRoom} — Jogador saiu`);
+    const room = rooms.get(playerRoom);
+    // Full reset via createFreshGame
+    rooms.set(playerRoom, createFreshGame());
+    io.to(`room-${playerRoom}`).emit('game-reset', { reason: 'Um jogador saiu.' });
+    io.emit('rooms-list', getRoomsSummary());
+    broadcastDashboard();
+    playerRoom = null;
+    playerTeam = null;
+    playerName = null;
   });
 });
 
@@ -389,6 +575,10 @@ function startGame(roomId) {
     pointsToWin: CONFIG.pointsToWin,
     operation: room.operation,
     roomId,
+    team1Name: room.teams[1].playerName || 'Lado 1',
+    team2Name: room.teams[2].playerName || 'Lado 2',
+    team1Wins: room.teams[1].sessionWins,
+    team2Wins: room.teams[2].sessionWins,
   });
 
   io.to(`room-${roomId}-team-2`).emit('game-start', {
@@ -397,6 +587,10 @@ function startGame(roomId) {
     pointsToWin: CONFIG.pointsToWin,
     operation: room.operation,
     roomId,
+    team1Name: room.teams[1].playerName || 'Lado 1',
+    team2Name: room.teams[2].playerName || 'Lado 2',
+    team1Wins: room.teams[1].sessionWins,
+    team2Wins: room.teams[2].sessionWins,
   });
 
   io.emit('rooms-list', getRoomsSummary());

@@ -35,6 +35,31 @@
     </div>
   </div>
 
+  <!-- ═══ NAME ENTRY SCREEN ═══ -->
+  <div id="screen-name-entry" class="screen">
+    <div class="name-entry-container">
+      <div class="logo-section">
+        <div class="logo-icon" style="font-size: 3rem;">🎮</div>
+        <h2 class="game-subtitle">Qual é o seu nome?</h2>
+      </div>
+      <div class="name-entry-form">
+        <input
+          type="text"
+          id="player-name-input"
+          class="name-input"
+          placeholder="Digite seu nome..."
+          maxlength="20"
+          autocomplete="off"
+        />
+        <button id="btn-confirm-name" class="confirm-name-btn" onclick="confirmName()">
+          ✅ Confirmar
+        </button>
+      </div>
+      <p class="name-hint">Seu nome aparecerá no ranking da turma!</p>
+      <button class="change-name-btn" onclick="clearSavedName()">🔄 Trocar nome</button>
+    </div>
+  </div>
+
   <!-- ═══ LOBBY SCREEN ═══ -->
   <div id="screen-lobby" class="screen">
     <div class="lobby-container">
@@ -70,22 +95,22 @@
       </div>
 
       <div class="team-selection">
-        <button id="btn-team1" class="team-btn team1-btn" onclick="joinTeam(1)">
+        <div id="panel-team1" class="team-panel team1-panel">
           <span class="team-emoji">🟢</span>
-          <span class="team-label">Time 1</span>
+          <span class="team-panel-name" id="team1-label">Lado 1</span>
           <span id="team1-status" class="team-status">Aguardando...</span>
-        </button>
+        </div>
 
         <div class="vs-divider">VS</div>
 
-        <button id="btn-team2" class="team-btn team2-btn" onclick="joinTeam(2)">
+        <div id="panel-team2" class="team-panel team2-panel">
           <span class="team-emoji">🔴</span>
-          <span class="team-label">Time 2</span>
+          <span class="team-panel-name" id="team2-label">Lado 2</span>
           <span id="team2-status" class="team-status">Aguardando...</span>
-        </button>
+        </div>
       </div>
 
-      <p class="lobby-hint">Escolha a operação e o time.<br>O jogo começa quando tudo estiver pronto!</p>
+      <p class="lobby-hint">Aguardando o adversário...<br>O jogo começa automaticamente quando os dois estiverem prontos!</p>
     </div>
   </div>
 
@@ -100,7 +125,7 @@
           <span id="score-t1" class="score-value">0</span>
         </div>
         <div class="score-center">
-          <span id="points-to-win">/ 6</span>
+          <span id="points-to-win">&#8596;&#65039;</span>
         </div>
         <div class="score-side score-team2">
           <span class="score-label">Time 2</span>
@@ -160,6 +185,7 @@
       <div id="result-icon" class="result-icon">🏆</div>
       <h1 id="result-title" class="result-title">Vitória!</h1>
       <p id="result-message" class="result-message"></p>
+      <div id="session-wins-display" class="session-wins" style="display:none;"></div>
       <div class="result-scores">
         <div class="result-score rs-team1">
           <span class="rs-label">Time 1</span>
@@ -172,6 +198,7 @@
         </div>
       </div>
       <button id="btn-restart" class="restart-btn" onclick="restartGame()">🔄 Jogar Novamente</button>
+      <button id="btn-leave" class="leave-btn" onclick="leaveRoom()">🚪 Sair</button>
     </div>
   </div>
 
@@ -180,6 +207,7 @@
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="audio.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
