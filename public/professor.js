@@ -168,9 +168,7 @@ let _qrInstance = null;
 
 async function showQRCode() {
   try {
-    const res = await fetch('/api/info');
-    const info = await res.json();
-    const url = info.url;
+    const url = 'https://cabo-de-guerra.onrender.com';
 
     const container = document.getElementById('qr-canvas');
     const modal = document.getElementById('qr-modal');
