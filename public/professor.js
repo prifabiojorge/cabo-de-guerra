@@ -273,7 +273,7 @@ function generatePDF(data) {
       checkPage(18);
       doc.setFillColor(...C_SECTION);
       doc.rect(margin, y, W - margin * 2, 8, 'F');
-      doc.setFontSize(10);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...C_ORANGE);
       doc.text(title, margin + 3, y + 5.5);
@@ -285,7 +285,7 @@ function generatePDF(data) {
       doc.setFillColor(...(rowIdx % 2 === 0 ? C_EVEN : C_ODD));
       doc.rect(margin, y, W - margin * 2, rowH, 'F');
       doc.setFont('helvetica', bold ? 'bold' : 'normal');
-      doc.setFontSize(8.5);
+      doc.setFontSize(10);
       doc.setTextColor(...(textColor || C_DARK));
       let x = margin + 2;
       cols.forEach((col, i) => {
@@ -299,19 +299,19 @@ function generatePDF(data) {
     doc.setFillColor(...C_NAVY);
     doc.rect(0, 0, W, 40, 'F');
 
-    doc.setFontSize(20);
+    doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...C_ORANGE);
     doc.text('OPERACAO PAI D\'EGUA: CABO DE GUERRA MATEMATICO', margin, 16);
 
-    doc.setFontSize(10);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(200, 200, 220);
     doc.text('Relatorio de Desempenho da Turma', margin, 24);
 
     const startStr = new Date(data.sessionStart).toLocaleString('pt-BR');
     const endStr   = new Date(data.sessionEnd).toLocaleString('pt-BR');
-    doc.setFontSize(8);
+    doc.setFontSize(10);
     doc.setTextColor(...C_LIGHT);
     doc.text('Inicio: ' + startStr + '   |   Termino: ' + endStr, margin, 31);
     doc.text('Total de partidas disputadas: ' + data.totalGames, margin, 37);
@@ -386,7 +386,7 @@ function generatePDF(data) {
              [42, 22, 25, 25, 20, 22, 26], -1, true, C_SECTION);
 
     if (ops.length === 0) {
-      doc.setTextColor(...C_MUTED); doc.setFontSize(9);
+      doc.setTextColor(...C_MUTED); doc.setFontSize(10);
       doc.text('Nenhuma operacao registrada.', margin + 4, y + 5);
       y += 12;
     } else {
@@ -435,7 +435,7 @@ function generatePDF(data) {
     }
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
+    doc.setFontSize(10);
 
     insights.forEach((ins, i) => {
       checkPage(12);
@@ -456,7 +456,7 @@ function generatePDF(data) {
       const footerY = 290;
       doc.setFillColor(...C_NAVY);
       doc.rect(0, footerY - 4, W, 12, 'F');
-      doc.setFontSize(7.5);
+      doc.setFontSize(9);
       doc.setTextColor(...C_LIGHT);
       doc.text('Operacao Pai d\'egua: cabo de guerra matematico - Prof. Fabio Fabuloso - CISEB 2026', margin, footerY + 2);
       doc.text('Pagina ' + pn + ' de ' + pageCount, W - margin, footerY + 2, { align: 'right' });
