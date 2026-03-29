@@ -1,4 +1,4 @@
-# 🪢 Cabo de Guerra: Matemática
+# 🪢 Operação Pai d'égua: cabo de guerra matemático
 
 > **Jogo educacional multiplayer** de matemática para sala de aula — disputado em tempo real entre duplas de alunos via navegador, com painel de controle para o professor.
 
@@ -30,7 +30,7 @@
 
 ## Visão Geral
 
-**Cabo de Guerra: Matemática** é um jogo web multiplayer em tempo real projetado para uso em sala de aula, especialmente em contextos com Chromebooks e redes Wi-Fi internas. Dois alunos (um por dispositivo) entram na mesma **mesa** e competem respondendo questões matemáticas individualmente. A cada resposta correta, o jogador "puxa a corda" para o seu lado. O primeiro a puxar a corda até o limite (6 posições) vence a partida.
+**Operação Pai d'égua: cabo de guerra matemático** é um jogo web multiplayer em tempo real projetado para uso em sala de aula, especialmente em contextos com Chromebooks e redes Wi-Fi internas. Dois alunos (um por dispositivo) entram na mesma **mesa** e competem respondendo questões matemáticas individualmente. A cada resposta correta, o jogador "puxa a corda" para o seu lado. O primeiro a puxar a corda até o limite (6 posições) vence a partida.
 
 ### Características Principais
 
@@ -245,7 +245,7 @@ Acesso: `http://localhost:3000/professor`
 | Elemento | Descrição |
 |---|---|
 | Título | "👨‍🏫 Painel do Professor" |
-| Subtítulo | "Cabo de Guerra: Matemática" |
+| Subtítulo | "Operação Pai d'égua: cabo de guerra matemático" |
 | Stat: Aguardando | Número de mesas em lobby |
 | Stat: Jogando | Número de mesas com jogo ativo |
 | Stat: Finalizadas | Número de mesas com jogo encerrado |
@@ -499,7 +499,7 @@ Professor clica "Criar Relatório"
 
 | Campo | Conteúdo |
 |---|---|
-| Título | "CABO DE GUERRA: MATEMATICA" |
+| Título | "OPERACAO PAI D'EGUA: CABO DE GUERRA MATEMATICO" |
 | Subtítulo | "Relatorio de Desempenho da Turma" |
 | Datas | Início e término da sessão |
 | Total de partidas | Número de jogos completos |
@@ -536,7 +536,7 @@ Gerado automaticamente com base nos dados:
 
 #### Rodapé (todas as páginas)
 
-"Cabo de Guerra: Matematica - Prof. Fabio Fabuloso - CISEB 2026 | Pagina N de M"
+"Operacao Pai d'egua: cabo de guerra matematico - Prof. Fabio Fabuloso - CISEB 2026 | Pagina N de M"
 
 > **Nota técnica:** jsPDF não suporta caracteres Unicode emoji. Toda a geração de PDF usa apenas caracteres ASCII/Latin-1 para garantir compatibilidade.
 

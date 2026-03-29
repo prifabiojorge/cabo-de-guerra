@@ -304,7 +304,7 @@ function generatePDF(data) {
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...C_ORANGE);
-    doc.text('CABO DE GUERRA: MATEMATICA', margin, 16);
+    doc.text('OPERACAO PAI D\'EGUA: CABO DE GUERRA MATEMATICO', margin, 16);
 
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -460,13 +460,13 @@ function generatePDF(data) {
       doc.rect(0, footerY - 4, W, 12, 'F');
       doc.setFontSize(7.5);
       doc.setTextColor(...C_LIGHT);
-      doc.text('Cabo de Guerra: Matematica - Prof. Fabio Fabuloso - CISEB 2026', margin, footerY + 2);
+      doc.text('Operacao Pai d\'egua: cabo de guerra matematico - Prof. Fabio Fabuloso - CISEB 2026', margin, footerY + 2);
       doc.text('Pagina ' + pn + ' de ' + pageCount, W - margin, footerY + 2, { align: 'right' });
     }
 
     // Download
     const dateStr = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-    doc.save('relatorio-cabo-de-guerra-' + dateStr + '.pdf');
+    doc.save('relatorio-operacao-pai-degua-' + dateStr + '.pdf');
 
     showToast('PDF gerado! Verifique a pasta Downloads do seu navegador.', 'success');
 

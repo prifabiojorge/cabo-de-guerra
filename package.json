@@ -1,7 +1,7 @@
 {
-  "name": "cabo-de-guerra-matematica",
-  "version": "1.0.0",
-  "description": "Jogo educacional Cabo de Guerra: Matemática — multiplayer para 2 Chromebooks",
+  "name": "operacao-pai-degua-cabo-de-guerra-matematico",
+  "version": "2.1.0",
+  "description": "Operação Pai d'égua: cabo de guerra matemático — jogo educacional multiplayer para 2 Chromebooks",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -620,7 +620,7 @@ server.listen(PORT, '0.0.0.0', () => {
 
   console.log('');
   console.log('═══════════════════════════════════════════════');
-  console.log('  🎮 CABO DE GUERRA: MATEMÁTICA');
+  console.log('  🎮 OPERAÇÃO PAI D\'ÉGUA: CABO DE GUERRA MATEMÁTICO');
   console.log(`  📊 ${CONFIG.totalRooms} Mesas disponíveis (até ${CONFIG.totalRooms * 2} jogadores)`);
   console.log('═══════════════════════════════════════════════');
   console.log(`  🏠 Local:    http://localhost:${PORT}`);

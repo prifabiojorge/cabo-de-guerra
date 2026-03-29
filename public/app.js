@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════
-   CABO DE GUERRA: MATEMÁTICA — Client Logic
+   OPERAÇÃO PAI D'ÉGUA: CABO DE GUERRA MATEMÁTICO — Client Logic
    ═══════════════════════════════════════════════ */
 
 const socket = io();
@@ -377,7 +377,7 @@ socket.on('game-over', (data) => {
     dom.resultIcon.textContent = isWinner ? '🏆' : '😢';
     dom.resultTitle.textContent = isWinner ? 'Vitória!' : 'Derrota!';
     dom.resultTitle.className = `result-title ${isWinner ? 'win' : 'lose'}`;
-    dom.resultMessage.textContent = `${winnerName} venceu o Cabo de Guerra!`;
+    dom.resultMessage.textContent = `${winnerName} venceu a Operação Pai d'égua!`;
 
     dom.finalScoreT1.textContent = data.team1Score;
     dom.finalScoreT2.textContent = data.team2Score;
